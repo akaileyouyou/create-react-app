@@ -21,14 +21,14 @@ const args = process.argv.slice(2);
 const scriptIndex = args.findIndex(
   x => x === 'build' || x === 'eject' || x === 'start' || x === 'test'
 );
-const script = scriptIndex === -1 ? args[0] : args[scriptIndex];  // yarn start启动时：script-》start；yarn build时：script-》build
+const script = scriptIndex === -1 ? args[0] : args[scriptIndex];  // yarn start启动时：script-》start；yarn build时：script-》build  =====1===
 const nodeArgs = scriptIndex > 0 ? args.slice(0, scriptIndex) : [];
 
 if (['build', 'eject', 'start', 'test'].includes(script)) {
-  const result = spawn.sync(
+  const result = spawn.sync(   // spawn是node的一个进程去执行相应的代码的。
     process.execPath,
     nodeArgs
-      .concat(require.resolve('../scripts/' + script))
+      .concat(require.resolve('../scripts/' + script))   // 在上一层的scripts文件夹下找到响应的脚本。    =========2==
       .concat(args.slice(scriptIndex + 1)),
     { stdio: 'inherit' }
   );

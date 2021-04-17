@@ -102,7 +102,7 @@ module.exports = function (webpackEnv) {
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
   // Get environment variables to inject into our app.
-  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));   // 获取环境变量（自注：好像是配置cdn用的）
+  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));   // 获取环境变量
 
   const shouldUseReactRefresh = env.raw.FAST_REFRESH;   // 要不要使用HMR热模块加载。
 
@@ -210,24 +210,24 @@ module.exports = function (webpackEnv) {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
       // Add /* filename */ comments to generated require()s in the output.
-      pathinfo: isEnvDevelopment,
+      pathinfo: isEnvDevelopment,// 如果在开发环境里，使用require(/* filename */)的形式加载文件的时候，会显示模块名称，以便开发。
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+        : isEnvDevelopment && 'static/js/bundle.js',  // 开发环境直接打包到bundle.js里。
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
       // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
+      chunkFilename: isEnvProduction   // 分包的时候怎么去命名文件
         ? 'static/js/[name].[contenthash:8].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.publicUrlOrPath,
+      publicPath: paths.publicUrlOrPath,  // 给所有的资源添加路径
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: isEnvProduction
+      devtoolModuleFilenameTemplate: isEnvProduction  // 设置source-map模板使用的。vue脚手架里没有这个设置。
         ? info =>
             path
               .relative(paths.appSrc, info.absoluteResourcePath)
@@ -236,7 +236,7 @@ module.exports = function (webpackEnv) {
           (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
       // Prevents conflicts when multiple webpack runtimes (from different apps)
       // are used on the same page.
-      jsonpFunction: `webpackJsonp${appPackageJson.name}`,
+      jsonpFunction: `webpackJsonp${appPackageJson.name}`,  // 早期在加载某个模块是使用jsonp实现的，webpack5里没有这个东西了。
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
       globalObject: 'this',

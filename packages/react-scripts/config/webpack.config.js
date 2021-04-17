@@ -236,12 +236,12 @@ module.exports = function (webpackEnv) {
           (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
       // Prevents conflicts when multiple webpack runtimes (from different apps)
       // are used on the same page.
-      jsonpFunction: `webpackJsonp${appPackageJson.name}`,  // 早期在加载某个模块是使用jsonp实现的，webpack5里没有这个东西了。
+      jsonpFunction: `webpackJsonp${appPackageJson.name}`,  // 早期在加载某个模块是使用jsonp实现的，webpack5里没有这个东西了，更名为 chunkLoadingGlobal(加载chunk的全局变量名称)
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
-      globalObject: 'this',
+      globalObject: 'this',  // 有讲过，打包库文件的时候，指定代码里this是window/self/或者其他。
     },
-    optimization: {
+    optimization: {   // 代码优化
       minimize: isEnvProduction,
       minimizer: [
         // This is only used in production mode

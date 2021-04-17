@@ -96,18 +96,18 @@ module.exports = function (webpackEnv) {
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
   const isEnvProductionProfile =
-    isEnvProduction && process.argv.includes('--profile');
+    isEnvProduction && process.argv.includes('--profile');  // 启动项有使用 --profile status=stats.json。webpack性能优化那块有讲到。
 
   // We will provide `paths.publicUrlOrPath` to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
   // Get environment variables to inject into our app.
-  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
+  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));   // 获取环境变量（自注：好像是配置cdn用的）
 
-  const shouldUseReactRefresh = env.raw.FAST_REFRESH;
+  const shouldUseReactRefresh = env.raw.FAST_REFRESH;   // 要不要使用HMR热模块加载。
 
   // common function to get style loaders
-  const getStyleLoaders = (cssOptions, preProcessor) => {
+  const getStyleLoaders = (cssOptions, preProcessor) => {   // 对样式在不同的开发环境，使用不同的loader。
     const loaders = [
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
@@ -130,7 +130,7 @@ module.exports = function (webpackEnv) {
         options: {
           postcssOptions: {
             plugins: [
-              require('postcss-flexbugs-fixes'),
+              require('postcss-flexbugs-fixes'),   // 这个插件可以看一下什么作用。
               [
                 require('postcss-preset-env'),
                 {
@@ -143,13 +143,13 @@ module.exports = function (webpackEnv) {
               // Adds PostCSS Normalize as the reset css with default options,
               // so that it honors browserslist config in package.json
               // which in turn let's users customize the target behavior as per their needs.
-              postcssNormalize(),
+              postcssNormalize(),   // 和normalize.css一起使用。
             ],
           },
           sourceMap: isEnvProduction && shouldUseSourceMap,
         },
       },
-    ].filter(Boolean);
+    ].filter(Boolean);   // 过滤掉数组里的false和空字符串。保证在使用loader时，里的语法格式是正确的。
     if (preProcessor) {
       loaders.push(
         {

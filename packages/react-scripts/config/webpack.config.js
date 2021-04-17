@@ -143,14 +143,14 @@ module.exports = function (webpackEnv) {
               // Adds PostCSS Normalize as the reset css with default options,
               // so that it honors browserslist config in package.json
               // which in turn let's users customize the target behavior as per their needs.
-              postcssNormalize(),   // 和normalize.css一起使用。
+              postcssNormalize(),   // 和normalize.css一起使用。删除用不到的css。
             ],
           },
           sourceMap: isEnvProduction && shouldUseSourceMap,
         },
       },
     ].filter(Boolean);   // 过滤掉数组里的false和空字符串。保证在使用loader时，里的语法格式是正确的。
-    if (preProcessor) {
+    if (preProcessor) {   // 是否使用预处理器。
       loaders.push(
         {
           loader: require.resolve('resolve-url-loader'),
@@ -173,7 +173,7 @@ module.exports = function (webpackEnv) {
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
-    bail: isEnvProduction,
+    bail: isEnvProduction,   // bail:true-》那么在compilation编译阶段[开始编译模块]，如果代码报错，那么立即停止编译。否则的话，就会停止编译，等待修改代码。
     devtool: isEnvProduction
       ? shouldUseSourceMap
         ? 'source-map'
@@ -182,7 +182,7 @@ module.exports = function (webpackEnv) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry:
-      isEnvDevelopment && !shouldUseReactRefresh
+      isEnvDevelopment && !shouldUseReactRefresh   // 开发环境，标并且使用热更新，
         ? [
             // Include an alternative client for WebpackDevServer. A client's job is to
             // connect to WebpackDevServer by a socket and get notified about changes.
@@ -198,14 +198,14 @@ module.exports = function (webpackEnv) {
             //
             // When using the experimental react-refresh integration,
             // the webpack plugin takes care of injecting the dev client for us.
-            webpackDevClientEntry,
+            webpackDevClientEntry,  // 添加一个新的入口文件，做热更新用的。
             // Finally, this is your app's code:
-            paths.appIndexJs,
+            paths.appIndexJs,  // 就是src下的index.js
             // We include the app code last so that if there is a runtime error during
             // initialization, it doesn't blow up the WebpackDevServer client, and
             // changing JS code would still trigger a refresh.
           ]
-        : paths.appIndexJs,
+        : paths.appIndexJs,  // 如果是生产环境，那么只用这个入口文[src文件夹下的index.js]件开始打包。
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,

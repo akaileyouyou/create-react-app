@@ -91,12 +91,12 @@ checkBrowsers(paths.appPath, isInteractive)
     return choosePort(HOST, DEFAULT_PORT);   // 选择端口
   })
   .then(port => {
-    if (port == null) {
+    if (port == null) { // 端口为空
       // We have not found a port.
       return;
     }
 
-    const config = configFactory('development');
+    const config = configFactory('development');   // 获取webpack的配资
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
 

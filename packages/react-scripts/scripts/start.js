@@ -96,12 +96,12 @@ checkBrowsers(paths.appPath, isInteractive)
       return;
     }
 
-    const config = configFactory('development');   // 获取webpack的配资
-    const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
-    const appName = require(paths.appPackageJson).name;
+    const config = configFactory('development');   // 获取webpack的配置
+    const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';  // 使用的协议
+    const appName = require(paths.appPackageJson).name;  // app的名字
 
-    const useTypeScript = fs.existsSync(paths.appTsConfig);
-    const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
+    const useTypeScript = fs.existsSync(paths.appTsConfig);  // 判断是否使用ts
+    const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';    // ts编译错误时是否退出编译
     const urls = prepareUrls(
       protocol,
       HOST,
@@ -115,7 +115,7 @@ checkBrowsers(paths.appPath, isInteractive)
         devServer.sockWrite(devServer.sockets, 'errors', errors),
     };
     // Create a webpack compiler that is configured with custom messages.
-    const compiler = createCompiler({
+    const compiler = createCompiler({   // 结合用户的配置选项创建webpack的编译器
       appName,
       config,
       devSocket,
@@ -126,7 +126,7 @@ checkBrowsers(paths.appPath, isInteractive)
       webpack,
     });
     // Load proxy config
-    const proxySetting = require(paths.appPackageJson).proxy;
+    const proxySetting = require(paths.appPackageJson).proxy;   // 代理的配置。说明我们可以把代理写到package.json文件里。
     const proxyConfig = prepareProxy(
       proxySetting,
       paths.appPublic,
@@ -137,9 +137,9 @@ checkBrowsers(paths.appPath, isInteractive)
       proxyConfig,
       urls.lanUrlForConfig
     );
-    const devServer = new WebpackDevServer(compiler, serverConfig);
+    const devServer = new WebpackDevServer(compiler, serverConfig);    // 直接自己new了一个devServer。创建DevServer对象。
     // Launch WebpackDevServer.
-    devServer.listen(port, HOST, err => {
+    devServer.listen(port, HOST, err => {   // 启动DevServer的本地服务；开始运行项目。
       if (err) {
         return console.log(err);
       }

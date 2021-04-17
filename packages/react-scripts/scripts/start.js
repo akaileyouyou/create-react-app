@@ -20,7 +20,7 @@ process.on('unhandledRejection', err => {
 });
 
 // Ensure environment variables are read.
-require('../config/env');
+require('../config/env');   // 配置环境的操作
 // @remove-on-eject-begin
 // Do the preflight check (only happens before eject).
 const verifyPackageTree = require('./utils/verifyPackageTree');
@@ -56,13 +56,13 @@ const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-  process.exit(1);
+if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {   // 检查app里的html以及入口存在与否
+  process.exit(1);   // 如果不存在，那么直接退出进程
 }
 
 // Tools like Cloud9 rely on this.
-const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;   // 端口号
+const HOST = process.env.HOST || '0.0.0.0';   // 本地地址
 
 if (process.env.HOST) {
   console.log(
@@ -83,12 +83,12 @@ if (process.env.HOST) {
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
-const { checkBrowsers } = require('react-dev-utils/browsersHelper');
+const { checkBrowsers } = require('react-dev-utils/browsersHelper');   // 检测浏览器。上面注释说需要我们设置默认的浏览器，否则的话使用package.json里browserslist的配置的浏览器来运行项目。
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
     // We attempt to use the default port but if it is busy, we offer the user to
     // run on a different port. `choosePort()` Promise resolves to the next free port.
-    return choosePort(HOST, DEFAULT_PORT);
+    return choosePort(HOST, DEFAULT_PORT);   // 选择端口
   })
   .then(port => {
     if (port == null) {

@@ -308,7 +308,7 @@ module.exports = function (webpackEnv) {
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-      splitChunks: {
+      splitChunks: {  // 分包
         chunks: 'all',
         name: isEnvDevelopment,
       },
@@ -319,12 +319,12 @@ module.exports = function (webpackEnv) {
         name: entrypoint => `runtime-${entrypoint.name}`,
       },
     },
-    resolve: {
+    resolve: {    // 解决文件路径
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
       // https://github.com/facebook/create-react-app/issues/253
-      modules: ['node_modules', paths.appNodeModules].concat(
+      modules: ['node_modules', paths.appNodeModules].concat(  // 加载模块时去哪里加载文件。
         modules.additionalModulePaths || []
       ),
       // These are the reasonable defaults supported by the Node ecosystem.
@@ -333,7 +333,7 @@ module.exports = function (webpackEnv) {
       // https://github.com/facebook/create-react-app/issues/290
       // `web` extension prefixes have been added for better support
       // for React Native Web.
-      extensions: paths.moduleFileExtensions
+      extensions: paths.moduleFileExtensions    // 当文件没有写文件后缀名的时候，去加载哪些文件。
         .map(ext => `.${ext}`)
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
@@ -347,22 +347,22 @@ module.exports = function (webpackEnv) {
         }),
         ...(modules.webpackAliases || {}),
       },
-      plugins: [
+      plugins: [  // resolve下的plugin：在加载模块时需要使用的插件。
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
         // guards against forgotten dependencies and such.
-        PnpWebpackPlugin,
+        PnpWebpackPlugin,   // 在yarn2.0里解决依赖效率低的问题。
         // Prevents users from importing files from outside of src/ (or node_modules/).
         // This often causes confusion because we only process files within src/ with babel.
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.appSrc, [
+        new ModuleScopePlugin(paths.appSrc, [  // 防止引用src文件夹以外的资源。 
           paths.appPackageJson,
           reactRefreshOverlayEntry,
         ]),
       ],
     },
-    resolveLoader: {
+    resolveLoader: {  // 解决loader路径的相关问题
       plugins: [
         // Also related to Plug'n'Play, but this time it tells webpack to load its loaders
         // from the current package.
@@ -370,15 +370,15 @@ module.exports = function (webpackEnv) {
       ],
     },
     module: {
-      strictExportPresence: true,
-      rules: [
+      strictExportPresence: true,   // 严格导出。导入时一定要有对应的导出内容，否则报错。
+      rules: [  // 配置加载某些文件的时候相关的loader规则，
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
-          oneOf: [
+          oneOf: [  // 文件一旦被某个loader处理，那么就不会再被其他loader处理。防止一个文件被多个loader配到到之后重复处理。提高效率。
             // TODO: Merge this config once `image/avif` is in the mime-db
             // https://github.com/jshttp/mime-db
             {
@@ -531,7 +531,7 @@ module.exports = function (webpackEnv) {
             // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
             // using the extension .module.css
             {
-              test: cssModuleRegex,
+              test: cssModuleRegex,  // 处理cssmodule写法的样式
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction
@@ -547,7 +547,7 @@ module.exports = function (webpackEnv) {
             // By default we support SASS Modules with the
             // extensions .module.scss or .module.sass
             {
-              test: sassRegex,
+              test: sassRegex,  // 处理sass
               exclude: sassModuleRegex,
               use: getStyleLoaders(
                 {
@@ -570,7 +570,7 @@ module.exports = function (webpackEnv) {
             // Adds support for CSS Modules, but using SASS
             // using the extension .module.scss or .module.sass
             {
-              test: sassModuleRegex,
+              test: sassModuleRegex,  // sass module
               use: getStyleLoaders(
                 {
                   importLoaders: 3,
@@ -596,7 +596,7 @@ module.exports = function (webpackEnv) {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],  // 排除掉上面处理过的文件类型，其他文件类型使用file-loader处理。
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
@@ -645,10 +645,10 @@ module.exports = function (webpackEnv) {
       // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
       // It will be an empty string unless you specify "homepage"
       // in `package.json`, in which case it will be the pathname of that URL.
-      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),  // 给html模板注入对应的环境变量(PUBLIC_URL)值。
       // This gives some necessary context to module not found errors, such as
       // the requesting resource.
-      new ModuleNotFoundPlugin(paths.appPath),
+      new ModuleNotFoundPlugin(paths.appPath),   // 找不到模块时，给出相应的错误信息。
       // Makes some environment variables available to the JS code, for example:
       // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
       // It is absolutely essential that NODE_ENV is set to production
@@ -661,7 +661,7 @@ module.exports = function (webpackEnv) {
       // https://github.com/facebook/react/tree/master/packages/react-refresh
       isEnvDevelopment &&
         shouldUseReactRefresh &&
-        new ReactRefreshWebpackPlugin({
+        new ReactRefreshWebpackPlugin({  // 热更新结合babel里的react-bable/refresh以前有讲。
           overlay: {
             entry: webpackDevClientEntry,
             // The expected exports are slightly different from what the overlay exports,
@@ -675,15 +675,15 @@ module.exports = function (webpackEnv) {
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebook/create-react-app/issues/240
-      isEnvDevelopment && new CaseSensitivePathsPlugin(),
+      isEnvDevelopment && new CaseSensitivePathsPlugin(),   // 路径中大小写敏感
       // If you require a missing module and then `npm install` it, you still have
       // to restart the development server for webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebook/create-react-app/issues/186
       isEnvDevelopment &&
-        new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+        new WatchMissingNodeModulesPlugin(paths.appNodeModules),  // 文件打包时对于缺少的模块提醒我们安装，而不是停止打包。
       isEnvProduction &&
-        new MiniCssExtractPlugin({
+        new MiniCssExtractPlugin({  // 提取css
           // Options similar to the same options in webpackOptions.output
           // both options are optional
           filename: 'static/css/[name].[contenthash:8].css',
@@ -718,12 +718,12 @@ module.exports = function (webpackEnv) {
       // solution that requires the user to opt into importing specific locales.
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // You can remove this if you don't use Moment.js:
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),   // 忽略某些文件----忽略moment库中的locals文件
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the webpack build.
       isEnvProduction &&
         fs.existsSync(swSrc) &&
-        new WorkboxWebpackPlugin.InjectManifest({
+        new WorkboxWebpackPlugin.InjectManifest({  // pwa相关东西。
           swSrc,
           dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
           exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
@@ -734,7 +734,7 @@ module.exports = function (webpackEnv) {
         }),
       // TypeScript type checking
       useTypeScript &&
-        new ForkTsCheckerWebpackPlugin({
+        new ForkTsCheckerWebpackPlugin({  // 对ts语法检测
           typescript: resolve.sync('typescript', {
             basedir: paths.appNodeModules,
           }),
@@ -791,7 +791,7 @@ module.exports = function (webpackEnv) {
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.
-    node: {
+    node: {   // 排除一些node的包
       module: 'empty',
       dgram: 'empty',
       dns: 'mock',
@@ -803,6 +803,6 @@ module.exports = function (webpackEnv) {
     },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
-    performance: false,
+    performance: false,   // 是否关闭性能提升。
   };
 };
